@@ -17,11 +17,6 @@ import { EFilter } from './interface/event.interface';
 export class EventController {
   constructor(private eventService: EventService) {}
 
-  // @Get()
-  // async getAllEvent() {
-  //   return this.eventService.getAllEvents();
-  // }
-
   @Get()
   async getByFilterWithDate(
     @Query('startDate') startDate: string,

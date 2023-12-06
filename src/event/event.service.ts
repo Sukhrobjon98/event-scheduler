@@ -33,12 +33,6 @@ export class EventService {
     return filterEvent;
   }
 
-  async getAllEvents() {
-    const allEvent = await this.eventModel.find({
-      relations: ['location'],
-    });
-    return allEvent;
-  }
 
   async createEvent(event: ECreate): Promise<Event> {
     let newEvent = await this.eventModel.create({
