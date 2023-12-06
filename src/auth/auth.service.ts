@@ -1,4 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { ULogin, URegister, UToken } from './interface/auth.interface';
 import { JwtService } from '@nestjs/jwt';
@@ -25,6 +29,9 @@ export class AuthService {
 
   async signIn(user: ULogin) {
     let userData = await this.userService.findUserByEmail(user.email);
+    if (!userData) {
+      throw new UnauthorizedException();
+    }
     let isMatch = await bcrypt.compare(user.password, userData.password);
 
     if (!isMatch) {
@@ -44,3 +51,5 @@ export class AuthService {
     };
   }
 }
+
+

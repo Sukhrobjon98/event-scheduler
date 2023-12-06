@@ -28,9 +28,6 @@ export class UserService {
     let userData = await this.userModel.findOne({
       where: { email: email },
     });
-    if (!userData) {
-      throw new HttpException('User not found', 404);
-    }
     return userData;
   }
 }

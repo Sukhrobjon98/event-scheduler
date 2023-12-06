@@ -18,7 +18,7 @@ import { EventModule } from './event/event.module';
     UserModule,
     AuthModule,
     EventModule,
-    LocationModule
+    LocationModule,
   ],
 })
 export class AppModule {}

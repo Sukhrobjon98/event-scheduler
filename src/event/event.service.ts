@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from './model/event.entity';
 import { Between, Repository } from 'typeorm';
@@ -27,24 +27,42 @@ export class EventService {
       ],
     });
 
+    if (filterEvent.length == 0) {
+      throw new NotFoundException();
+    }
     return filterEvent;
   }
 
+  async getAllEvents() {
+    const allEvent = await this.eventModel.find({
+      relations: ['location'],
+    });
+    return allEvent;
+  }
+
   async createEvent(event: ECreate): Promise<Event> {
-    console.log(event);
-    
     let newEvent = await this.eventModel.create({
       ...event,
     });
+
     await this.eventModel.save(newEvent);
+
     return newEvent;
   }
 
   async updateEvent(id: number, event: EUpdate): Promise<Event> {
+    const getEvent = await this.eventModel.findOne({ where: { id } });
+    if (!getEvent) {
+      throw new NotFoundException();
+    }
     await this.eventModel.update(id, event);
     return await this.eventModel.findOne({ where: { id } });
   }
   async deleteEvnent(id: number): Promise<any> {
+    const event = await this.eventModel.findOne({ where: { id } });
+    if (!event) {
+      throw new NotFoundException();
+    }
     return await this.eventModel.delete(id);
   }
 }
