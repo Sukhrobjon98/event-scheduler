@@ -10,8 +10,15 @@ export class LocationService {
     @InjectRepository(Location) private locationModel: Repository<Location>,
   ) {}
 
-  async createLocation(locationData: LCreate): Promise<Location> {
-    let newLocation = await this.locationModel.create(locationData);
+  async getAllLocations(id: number): Promise<Location[]> {
+    return await this.locationModel.find({ where: { userId: id } });
+  }
+
+  async createLocation(locationData: LCreate, id: number): Promise<Location> {
+    let newLocation = await this.locationModel.create({
+      ...locationData,
+      userId: id,
+    });
     await this.locationModel.save(newLocation);
     return newLocation;
   }
@@ -36,11 +43,5 @@ export class LocationService {
     }
     await this.locationModel.delete(id);
     throw new HttpException(`id:${id} location has deleted`, 200);
-  }
-
-  async getAllLocations(): Promise<Location[]> {
-    return await this.locationModel.find({
-      relations: ['events'],
-    });
   }
 }

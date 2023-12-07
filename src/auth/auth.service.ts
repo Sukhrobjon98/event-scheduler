@@ -22,34 +22,31 @@ export class AuthService {
     });
     const access_token = await this.tokenGenerator({
       id: userData.id,
-      fullname: userData.fullname,
+      username: userData.username,
     });
     return { ...access_token };
   }
 
-  async signIn(user: ULogin) {
-    let userData = await this.userService.findUserByEmail(user.email);
-    if (!userData) {
-      throw new UnauthorizedException();
+  async validateUsers({ email, password }: ULogin) {
+    let userData = await this.userService.findUserByEmail(email);
+    let isMatch = await bcrypt.compare(password, userData.password);
+    if (userData && isMatch) {
+      const { password, ...result } = userData;
+      return result;
     }
-    let isMatch = await bcrypt.compare(user.password, userData.password);
 
-    if (!isMatch) {
-      throw new HttpException('Invalid credentials', 401);
-    }
-    const access_token = await this.tokenGenerator({
-      id: userData.id,
-      fullname: userData.fullname,
-    });
-    return { ...access_token };
+    return null;
+  }
+
+  async signIn(user: UToken) {
+    const token = await this.tokenGenerator(user);
+    return token;
   }
 
   async tokenGenerator(user: UToken) {
-    const payload = { fullnam: user.fullname, id: user.id };
+    const payload = { username: user.username, id: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 }
-
-

@@ -1,4 +1,5 @@
 import { Location } from 'src/location/model/location.entity';
+import { User } from 'src/user/model/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -29,4 +30,11 @@ export class Event {
   @ManyToOne(() => Location, (location) => location)
   @JoinColumn({ name: 'locationId' })
   location: Location;
+
+  @Column()
+  userId: number;
+
+  @ManyToOne(() => User, (user) => user.events)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }

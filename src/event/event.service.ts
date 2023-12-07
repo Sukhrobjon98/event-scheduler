@@ -8,7 +8,7 @@ import { ECreate, EFilter, EUpdate, IEvent } from './interface/event.interface';
 export class EventService {
   constructor(@InjectRepository(Event) private eventModel: Repository<Event>) {}
 
-  async filterEvent(filterDate: EFilter): Promise<any> {
+  async filterEvent(filterDate: EFilter, id: number): Promise<any> {
     let filterEvent = await this.eventModel.find({
       relations: ['location'],
       where: {
@@ -16,6 +16,7 @@ export class EventService {
           new Date(filterDate.startDate),
           new Date(filterDate.endDate),
         ),
+        userId: id,
       },
       select: [
         'id',
@@ -33,10 +34,10 @@ export class EventService {
     return filterEvent;
   }
 
-
-  async createEvent(event: ECreate): Promise<Event> {
+  async createEvent(event: ECreate, id: number): Promise<Event> {
     let newEvent = await this.eventModel.create({
       ...event,
+      userId: id,
     });
 
     await this.eventModel.save(newEvent);
